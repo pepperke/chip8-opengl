@@ -52,18 +52,20 @@
 # rF     collision detection
 
 Start       CLR
-            LOAD    rA,$1       # Set left player X coord.
+            LOAD    rA,$0       # Set left player X coord.
             LOAD    rB,$C       # Set left player Y coord.
             LOAD    rC,$3F      # Set right player X coord.
             LOAD    rD,$C       # Set right player Y coord.
             LOADI   Paddle      # Get address of paddle sprite
 
-#            DRAW    rA,rB,$6    # Draw left paddle
-#            DRAW    rC,rD,$6    # Draw right paddle
+            DRAW    rA,rB,$6    # Draw left paddle
+            DRAW    rC,rD,$6    # Draw right paddle
             LOAD    rE,$0       # Set score to 00
             CALL    Draw_Score  # Draw score
 
-            LOAD    r6,$1       # Set X coord. of ball to 3
+            RFRSH
+
+            LOAD    r6,$1       # Set X coord. of ball to 1
             LOAD    r8,$2       # Set ball X direction to right
 
 Big_Loop    LOAD    r0,$60      # Set r0=delay before ball launch
@@ -77,6 +79,8 @@ DT_Loop     MOVED   r0          # Read delay timer into r0
             LOAD    r9,$FF      # Set ball Y direction to up
             LOADI   Ball        # Get address of ball sprite
             DRAW    r6,r7,$1    # Draw ball
+
+            RFRSH
 
 Padl_Loop   LOADI   Paddle      # Get address of paddle sprite
             DRAW    rA,rB,$6    # Draw left paddle
@@ -106,6 +110,8 @@ Padl_Loop   LOADI   Paddle      # Get address of paddle sprite
             AND     rD,r0       # AND rD with r0          | adjust the paddle position if
             DRAW    rC,rD,$6    # Draw right paddle       | it is out of the screen
 
+            RFRSH
+
             LOADI   Ball        # Get address of ball sprite
             DRAW    r6,r7,$1    # Draw ball
 
@@ -118,7 +124,7 @@ Padl_Loop   LOADI   Paddle      # Get address of paddle sprite
             LOAD    r1,$1F      # Set r1 to max Y location
             AND     r7,r1       # AND r7 with r1
 
-            SKNE    r6,$2       # Skip next instruction if ball not at left
+            SKNE    r6,$0       # Skip next instruction if ball not at left
             JUMP    Left_Side   #
 
             SKNE    r6,$3F      # Skip next instruction if ball not at right
@@ -132,7 +138,8 @@ Ball_Loop   SKNE    r7,$1F      # Skip next instruction if ball not at bottom
     
             DRAW    r6,r7,$1    # Draw ball
 
-# END         JUMP    END
+            RFRSH
+
             JUMP    Padl_Loop   #
 
 Left_Side   LOAD    r8,$2       # Set X direction to right
@@ -166,9 +173,11 @@ Ball_Lost   CALL    Draw_Score  # Erase previous score
             ADDR    rE,r3       # Add 1 or 10 to score depending on r3
             CALL    Draw_Score  # Write new score
 
+            RFRSH
+
             LOAD    r6,$3E      # Set ball X coord. to right side
             SKE     r3,$1       # Skip next instr. if right player got point
-            LOAD    r6,$2       # Set ball X coord. to left side
+            LOAD    r6,$1       # Set ball X coord. to left side
             LOAD    r8,$FE      # Set direction to left
             SKE     r3,$1       # Skip next instr. if right player got point
             LOAD    r8,$2       # Set direction to right

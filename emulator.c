@@ -4,9 +4,9 @@
 #include <GL/freeglut.h>
 #include "emulator.h"
 
-struct timeval tv;
-unsigned count = 0;
-unsigned start, end;
+// struct timeval tv;
+// unsigned count = 0;
+// unsigned start, end;
 
 GLenum rcode;
 
@@ -15,9 +15,9 @@ int main(int argc, char *argv[]) {
     
     srand(1);
 
-    gettimeofday(&tv, NULL);
-    start = 1000000 * tv.tv_sec + tv.tv_usec;
-    end = start;
+    // gettimeofday(&tv, NULL);
+    // start = 1000000 * tv.tv_sec + tv.tv_usec;
+    // end = start;
     
     char path[MAX_PATH_LEN + 1];
     memset(path, 0, sizeof(path));
@@ -127,6 +127,9 @@ void read_op(int once) {
                     break;
                 case 0xEE:
                     c.PC = pop_PC_stack();
+                    break;
+                case 0xEF:
+                    glutSwapBuffers();
                     break;
                 default:
                     // unimplemented
@@ -338,7 +341,6 @@ void draw_sprite(BYTE x, BYTE y, BYTE N) {
     for (BYTE i = 0; i < N; i++) {
         draw_line(c.memory[c.rI + i], x, y + i);
     }
-    glutSwapBuffers();
 }
 
 void handleKeys(BYTE key_code, int _x, int _y) {
@@ -348,7 +350,6 @@ void handleKeys(BYTE key_code, int _x, int _y) {
         c.key = key_code - 'a' + 10;
     else
         c.key = 0xFF;
-    // printf("%x key pressed\n", c.key);
 }
 
 void idle(int _val) {
@@ -359,12 +360,12 @@ void idle(int _val) {
             // count = 0;
         // }
         read_op(0);
-        count++;
-        gettimeofday(&tv, NULL);
-        end = 1000000 * tv.tv_sec + tv.tv_usec;
+        // count++;
+        // gettimeofday(&tv, NULL);
+        // end = 1000000 * tv.tv_sec + tv.tv_usec;
     }
 
-    glutTimerFunc(1, idle, 0);
+    glutTimerFunc(3, idle, 0);
 }
 
 void read_program(const char *path) {
